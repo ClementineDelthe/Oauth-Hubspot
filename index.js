@@ -23,20 +23,21 @@ if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET) {
 //  installing. If they don't match your app's configuration, users will
 //  see an error page.
 
-// Replace the following with the values from your app auth config, 
+// Replace the following with the values from your app auth config,
 // or set them as environment variables before running.
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 
 // Scopes for this app will default to `crm.objects.contacts.read`
 // To request others, set the SCOPE environment variable instead
-let SCOPES = ['crm.objects.contacts.read'];
+// let SCOPES = ['crm.objects.contacts.read'];
+let SCOPES = process.env.SCOPE;
 if (process.env.SCOPE) {
     SCOPES = (process.env.SCOPE.split(/ |, ?|%20/)).join(' ');
 }
 
 // On successful install, users will be redirected to /oauth-callback
-const REDIRECT_URI = `http://localhost:${PORT}/oauth-callback`;
+const REDIRECT_URI = `https://23e5-2a01-cb19-59-0-3cda-c213-c6ce-669a.ngrok-free.app/oauth-callback`;
 
 //===========================================================================//
 
@@ -46,7 +47,7 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }));
- 
+
 //================================//
 //   Running the OAuth 2.0 Flow   //
 //================================//
@@ -55,7 +56,7 @@ app.use(session({
 // Build the authorization URL to redirect a user
 // to when they choose to install the app
 const authUrl =
-  'https://app.hubspot.com/oauth/authorize' +
+  'https://app-eu1.hubspot.com/oauth/authorize' + // j'ai modifié de 'https://app.hubspot.com/oauth/authorize' à https://app-eu1.hubspot.com/oauth/authorize
   `?client_id=${encodeURIComponent(CLIENT_ID)}` + // app's client ID
   `&scope=${encodeURIComponent(SCOPES)}` + // scopes being requested by the app
   `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}`; // where to send the user after the consent page
@@ -69,11 +70,14 @@ app.get('/install', (req, res) => {
   console.log("===> Step 1: Redirecting user to your app's OAuth URL");
   res.redirect(authUrl);
   console.log('===> Step 2: User is being prompted for consent by HubSpot');
+  // console.log(res.query); UNDEFINED
+  // console.log(res); // /install query -> null
 });
 
+console.log('Authorization URL:', authUrl);
+
 // Step 2
-// The user is prompted to give the app access to the requested
-// resources. This is all done by HubSpot, so no work is necessary
+// The user is prompted to t. This is all done by HubSpot, so no work is necessary
 // on the app's end
 
 // Step 3
